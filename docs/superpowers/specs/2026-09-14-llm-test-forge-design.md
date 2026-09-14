@@ -60,7 +60,7 @@ Nothing downstream runs while `feature.yaml` is `pending`.
   status: pending            # pending | approved | rejected | edited
 ```
 
-The generator must cover every `kind` at least once unless `--kinds` restricts it. `--more` appends new pending scenarios without touching reviewed ones. A scenario with id `imported` is created by `import` and holds real inputs.
+The generator must cover every `kind` at least once unless `--kinds` restricts it. `--more` appends new pending scenarios without touching reviewed ones. A scenario with id `imported` is created by `import` and holds real inputs; its `oracle` follows `feature.output.kind` (`label` → `label`, `json` → `fields`, `text` → `rubric`) unless `--oracle` overrides it.
 
 ### `cases/<scenario-id>.yaml` — written by `cases` and `import`
 
@@ -106,7 +106,7 @@ Each verb is one pure function in `src/core/`: it takes the parsed previous file
 | `scenarios [--kinds k,k] [--more n] [--model m]` | feature (approved) | `scenarios.yaml` | yes: enumerate, covering every kind |
 | `cases [--n 5] [--scenario id] [--model m]` | feature, approved scenarios | `cases/<id>.yaml` | yes: one batch per scenario, expected in the oracle's shape |
 | `dedupe [--scenario id] [--model m]` | cases | `duplicate_of` on likely repeats | yes: one call per scenario |
-| `import <file.jsonl>` | JSONL: one object per line whose keys match `feature.inputs` | `cases/imported.yaml` (pending, no expected) | no |
+| `import <file.jsonl> [--oracle o]` | JSONL: one object per line whose keys match `feature.inputs` | `cases/imported.yaml` (pending, no expected) + the `imported` scenario if absent | no |
 | `review [--scenario id] [--only cases] [--all]` | everything pending | statuses, edits, expected of imported cases | no |
 | `estimate` | suite, approved cases, `prices.yaml` | stdout table | no (tokenizer where available, chars/4 otherwise) |
 | `emit [--format promptfoo\|jsonl]` | suite, approved cases | `promptfooconfig.yaml` + `forge_target.py`, or `cases.jsonl` | no |
@@ -114,11 +114,11 @@ Each verb is one pure function in `src/core/`: it takes the parsed previous file
 
 ### `review`
 
-Walks pending items in order: feature, scenarios, cases grouped by scenario, with `duplicate_of` pairs shown together. Per item: approve, reject, edit, skip. Edit opens the item as YAML in `$EDITOR` and writes it back as `edited`. An imported case without `expected` asks for it in the oracle's shape. `--all` approves everything pending in one scenario (for people who already read the file in their editor). Ends with a count of approved, rejected and still pending.
+Walks pending items in order: feature, scenarios, cases grouped by scenario, with `duplicate_of` pairs shown together. Per item: approve, reject, edit, skip. Edit opens the item as YAML in `$EDITOR` and writes it back as `edited`. An imported case without `expected` asks for it in the oracle's shape. `--all` (requires `--scenario`) approves everything pending in that scenario, for people who already read the file in their editor. Ends with a count of approved, rejected and still pending.
 
 ### `estimate`
 
-Before any call: input tokens per case (provider tokenizer when available, characters ÷ 4 otherwise) × cases × target models × repeat, plus judge cost on rubric cases only (two judges each), priced by `prices.yaml` (versioned in this repo, editable by the user, with a dated header). Output in tokens and dollars per model, with the price-table date and an explicit note that output size is a guess derived from `output.kind`. A model missing from `prices.yaml` is priced as the closest known model and the line is marked.
+Before any call: input tokens per case (provider tokenizer when available, characters ÷ 4 otherwise) × cases × target models × repeat, plus judge cost on rubric cases only (one call per judge listed in the suite), priced by `prices.yaml` (versioned in this repo, editable by the user, with a dated header). Output in tokens and dollars per model, with the price-table date and an explicit note that output size is a guess derived from `output.kind`. A model missing from `prices.yaml` is priced as the closest known model and the line is marked.
 
 ### `emit`
 
@@ -127,9 +127,9 @@ Before any call: input tokens per case (provider tokenizer when available, chara
 | approved or edited case | one `tests` item: `vars` = inputs, `metadata: {scenario, case}` |
 | oracle `label` | `javascript` assert: tolerant-parse the output, compare the label field |
 | oracle `fields` | `javascript` assert: tolerant-parse, subset match |
-| oracle `rubric` | two `llm-rubric` asserts, one per judge in the suite, same text |
+| oracle `rubric` | one `llm-rubric` assert per judge listed in the suite, same text, `provider:` set per assert |
 | `target.kind: promptfoo-python` | provider `file://forge_target.py`, a skeleton the person fills by calling the real function |
-| `target.models` | passed to the shim as an environment variable so the app uses the run's model |
+| `target.models` | one promptfoo provider entry per model, each wrapping the same shim with `FORGE_MODEL=<model>` in its config; the shim reads `FORGE_MODEL` so the app uses the run's model |
 | `repeat` | `evaluateOptions.repeat` |
 
 The shim is generated once and never overwritten if present. The tolerant parser (strip code fences, take the first JSON object) runs **inside the assert**, so the suite measures the application and not its output formatting — the spike's eight false failures came from testing the raw prompt. `emit` refuses when any included scenario or case is pending, listing them. `--format jsonl` writes approved cases as flat JSONL (`input`, `expected`, `scenario`, `kind`) for any other consumer; both emitters read the same in-memory object.
