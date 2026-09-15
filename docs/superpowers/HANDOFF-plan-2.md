@@ -48,3 +48,13 @@ moonlighter's `classify_response` (`~/Programming/moonlighter/packages/email/moo
 ## Backlog
 
 `BACKLOG.md` carries 18 items, 15 of them lifted out of plan 1's execution ledger before that ledger was deleted. Read it before writing plan 2; several items are cheap enough to fold into a task rather than live on as separate work.
+
+## Addendum, 2026-09-15: the three open questions, measured
+
+Measured by running promptfoo 0.123.0 from a scratch directory before plan 2 was written; the full list of facts is in `plans/2026-09-15-run-half.md` under "Verified facts", and the raw output of the run is `tests/fixtures/promptfoo-results-0.123.0.json`.
+
+- **`cost` in `results.json` is the target's cost only.** Verified by arithmetic on the spike's Haiku rows (403 in × $1/M + 89 out × $5/M = $0.000848, exactly the row's `cost`). Judges appear as tokens under `gradingResult.componentResults[].tokensUsed`, never as dollars; `report` prices them from `prices.yaml`. A Python target reports `cost: 0` and zero tokens unless the shim returns `tokenUsage`/`cost`, which promptfoo then keeps verbatim.
+- **promptfoo's Python provider does call moonlighter's real `classify_response`.** An `async def call_api` importing `classify_response` and `make_api_caller`, run through moonlighter's venv via `pythonExecutable`, passed 4/4 against Anthropic Haiku. `options["config"]` carries the provider's config block, which is how the per-model providers pass the model; the spec's `FORGE_MODEL` environment variable is not a promptfoo mechanism and plan 2 uses `config.model` instead.
+- **The MCP server works with a config the forge shape produces.** `promptfoo mcp --transport stdio` lists 14 tools; `validate_promptfoo_config` returned `isValid: true` on the probe config, and `run_evaluation` takes `configPath` and `repeat`. Nothing in plan 2 depends on it.
+
+Two more facts that changed the plan: `tests[].metadata` reaches every result row (so `report` matches on it, not on `testIdx`, which `repeat` renumbers), and installing promptfoo costs 2.1 GB and 79 s, so it is not a devDependency — CI validates the example with `bunx promptfoo@0.123.0 validate`.
