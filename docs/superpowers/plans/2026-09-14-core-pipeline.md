@@ -10,7 +10,7 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-14-llm-test-forge-design.md`
 
-**Status:** not started
+**Status:** Task 1 ✓ · Task 2 ✓ · Task 3 ✓ · Task 4 ✓ · Task 5 ✓ · Task 6 ✓ · Task 7 ✓ · Task 8 ✓ · Task 9 ✓ · Task 10 ✓ · Task 11 ✓ — executed 2026-09-15 by subagent-driven development, merged as cce512d; the whole-branch review and its six fixes are recorded in PROJECT-LOG.md (checkboxes marked after the fact, on 2026-09-15)
 
 ## Global Constraints
 
@@ -73,7 +73,7 @@ README.md, README.pt.md      bilingual, flag links, badges (CI, lint, coverage)
 **Interfaces:**
 - Produces: `ForgeError` class in `src/core/errors.ts`: `new ForgeError(message: string, details?: { file?: string; id?: string; rawPath?: string })`; `.details` is public; `.message` is the message with the details appended as ` (file: …, id: …, raw: …)` when present.
 
-- [ ] **Step 1: Initialise the package and install dependencies**
+- [x] **Step 1: Initialise the package and install dependencies**
 
 Run in `~/Programming/llm-test-forge`:
 
@@ -114,7 +114,7 @@ Then replace `package.json` with:
 }
 ```
 
-- [ ] **Step 2: Write tsconfig, biome, bunfig and .gitignore**
+- [x] **Step 2: Write tsconfig, biome, bunfig and .gitignore**
 
 `tsconfig.json`:
 
@@ -168,7 +168,7 @@ coverage/
 .forge/usage.jsonl
 ```
 
-- [ ] **Step 3: Write the failing test for ForgeError**
+- [x] **Step 3: Write the failing test for ForgeError**
 
 `tests/core/errors.test.ts`:
 
@@ -192,12 +192,12 @@ describe("ForgeError", () => {
 });
 ```
 
-- [ ] **Step 4: Run the test to verify it fails**
+- [x] **Step 4: Run the test to verify it fails**
 
 Run: `bun test tests/core/errors.test.ts`
 Expected: FAIL — cannot resolve `../../src/core/errors`.
 
-- [ ] **Step 5: Implement ForgeError**
+- [x] **Step 5: Implement ForgeError**
 
 `src/core/errors.ts`:
 
@@ -223,13 +223,13 @@ export class ForgeError extends Error {
 }
 ```
 
-- [ ] **Step 6: Run the test, lint, and the coverage canary**
+- [x] **Step 6: Run the test, lint, and the coverage canary**
 
 Run: `bun test` — Expected: 2 pass, coverage table printed, exit 0.
 Run: `bun run lint` — Expected: no errors (fix formatting with `bun run format` if it complains).
 Canary: temporarily add `export function never(): number { return 1; }` to `src/core/errors.ts`, run `bun test`, expect exit 1 with the functions percentage below 95. Remove the function, run again, expect exit 0. Note the two exit codes in the task note — the gate is only trusted after it has been seen red.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add package.json bun.lock tsconfig.json biome.json bunfig.toml .gitignore src/core/errors.ts tests/core/errors.test.ts
@@ -247,7 +247,7 @@ git commit -m "Scaffold bun/TypeScript project with Biome, coverage gate and For
 - Produces (schemas.ts): `Kind`, `Oracle`, `Status`, `FeatureStatus` zod enums; `FeatureSchema`, `ScenarioSchema`, `CaseSchema`, `ExpectedSchema`, `SuiteSchema`; types `Feature`, `Scenario`, `Case`, `Expected`, `Suite` via `z.infer`.
 - Produces (files.ts): `forgePaths(forgeDir: string)` → `{ root, feature, scenarios, casesDir, suite, usage, failuresDir }`; `readFeature(forgeDir): Promise<Feature>`; `writeFeature(forgeDir, f): Promise<void>`; `readScenarios(forgeDir): Promise<Scenario[]>` (empty array when the file is absent); `writeScenarios(forgeDir, s)`; `readCases(forgeDir, scenarioId): Promise<Case[]>` (empty when absent); `writeCases(forgeDir, scenarioId, cases)`; `listCaseScenarios(forgeDir): Promise<string[]>` (scenario ids that have a cases file, sorted). Every read validates with the schema and throws `ForgeError` naming the file on failure.
 
-- [ ] **Step 1: Write the failing schema tests**
+- [x] **Step 1: Write the failing schema tests**
 
 `tests/core/schemas.test.ts`:
 
@@ -312,11 +312,11 @@ describe("SuiteSchema", () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `bun test tests/core/schemas.test.ts` — Expected: FAIL, module not found.
 
-- [ ] **Step 3: Implement the schemas**
+- [x] **Step 3: Implement the schemas**
 
 `src/core/schemas.ts`:
 
@@ -404,11 +404,11 @@ export type Case = z.infer<typeof CaseSchema>;
 export type Suite = z.infer<typeof SuiteSchema>;
 ```
 
-- [ ] **Step 4: Run the schema tests**
+- [x] **Step 4: Run the schema tests**
 
 Run: `bun test tests/core/schemas.test.ts` — Expected: all pass.
 
-- [ ] **Step 5: Write the failing file I/O tests**
+- [x] **Step 5: Write the failing file I/O tests**
 
 `tests/fixtures/feature.yaml`:
 
@@ -500,11 +500,11 @@ describe("scenarios and cases", () => {
 });
 ```
 
-- [ ] **Step 6: Run to verify it fails**
+- [x] **Step 6: Run to verify it fails**
 
 Run: `bun test tests/core/files.test.ts` — Expected: FAIL, module not found.
 
-- [ ] **Step 7: Implement files.ts**
+- [x] **Step 7: Implement files.ts**
 
 `src/core/files.ts`:
 
@@ -607,12 +607,12 @@ export async function listCaseScenarios(forgeDir: string): Promise<string[]> {
 }
 ```
 
-- [ ] **Step 8: Run all tests and lint**
+- [x] **Step 8: Run all tests and lint**
 
 Run: `bun test` — Expected: all pass, coverage above threshold.
 Run: `bun run lint` — Expected: clean (Biome may ask to reorder the two `zod` imports in files.ts; apply `bun run format`).
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add src/core/schemas.ts src/core/files.ts tests/core/schemas.test.ts tests/core/files.test.ts tests/fixtures/feature.yaml
@@ -632,7 +632,7 @@ git commit -m "Add zod schemas and YAML I/O for feature, scenarios, cases and su
 - Produces (templates.ts): `loadTemplate(name: string): Promise<string>` reads `templates/<name>.md` relative to the package root (`new URL("../../templates/", import.meta.url)`); `render(template: string, vars: Record<string, string>): string` replaces every `{{name}}` and throws `ForgeError` if a placeholder has no value.
 - Fake provider contract: `<path>` is a JSON file `{ "<verb>": string | string[] }` keyed by the verb; `generate` passes the verb through `providerOptions` is not available on the mock, so `createLlm` handles `fake/` itself: it reads the file, picks the entry for `args.verb`, and if it is an array returns entries in order across calls within the process (a module-level cursor per file+verb). Missing verb → `ForgeError`.
 
-- [ ] **Step 1: Write the failing tests for models.ts**
+- [x] **Step 1: Write the failing tests for models.ts**
 
 `tests/llm/models.test.ts`:
 
@@ -669,11 +669,11 @@ describe("resolveModel", () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `bun test tests/llm/models.test.ts` — Expected: FAIL, module not found.
 
-- [ ] **Step 3: Implement models.ts**
+- [x] **Step 3: Implement models.ts**
 
 `src/llm/models.ts`:
 
@@ -727,11 +727,11 @@ export function resolveModel(spec: string, env: Record<string, string | undefine
 }
 ```
 
-- [ ] **Step 4: Run the models tests**
+- [x] **Step 4: Run the models tests**
 
 Run: `bun test tests/llm/models.test.ts` — Expected: pass. If `m.provider` is not a string containing "anthropic" on this SDK version, print it once with `console.log` and change the assertion to the real value; record in the task note.
 
-- [ ] **Step 5: Write the failing tests for templates.ts**
+- [x] **Step 5: Write the failing tests for templates.ts**
 
 `tests/llm/templates.test.ts`:
 
@@ -762,7 +762,7 @@ describe("loadTemplate", () => {
 });
 ```
 
-- [ ] **Step 6: Implement templates.ts and the first template**
+- [x] **Step 6: Implement templates.ts and the first template**
 
 `src/llm/templates.ts`:
 
@@ -809,11 +809,11 @@ Real prompt sent by the application (may be empty):
 </prompt>
 ```
 
-- [ ] **Step 7: Run the template tests**
+- [x] **Step 7: Run the template tests**
 
 Run: `bun test tests/llm/templates.test.ts` — Expected: pass.
 
-- [ ] **Step 8: Write the failing tests for generate.ts**
+- [x] **Step 8: Write the failing tests for generate.ts**
 
 `tests/fixtures/fake-responses.json`:
 
@@ -900,11 +900,11 @@ describe("createLlm.generate", () => {
 });
 ```
 
-- [ ] **Step 9: Run to verify it fails**
+- [x] **Step 9: Run to verify it fails**
 
 Run: `bun test tests/llm/generate.test.ts` — Expected: FAIL, module not found.
 
-- [ ] **Step 10: Implement generate.ts**
+- [x] **Step 10: Implement generate.ts**
 
 `src/llm/generate.ts`:
 
@@ -1004,12 +1004,12 @@ export function createLlm(opts: CreateLlmOptions): Llm {
 }
 ```
 
-- [ ] **Step 11: Run all tests and lint**
+- [x] **Step 11: Run all tests and lint**
 
 Run: `bun test` — Expected: pass. If `NoObjectGeneratedError.isInstance` does not exist on this version, use `e instanceof NoObjectGeneratedError` and note it.
 Run: `bun run lint` — Expected: clean.
 
-- [ ] **Step 12: Commit**
+- [x] **Step 12: Commit**
 
 ```bash
 git add src/llm tests/llm tests/fixtures/fake-responses.json templates/describe.md
@@ -1028,7 +1028,7 @@ git commit -m "Add the model layer: provider registry, generate with usage log a
 - Consumes: `Llm` from `src/llm/generate.ts`; `loadTemplate`, `render` from `src/llm/templates.ts`; `FeatureSchema`, `Feature` from `src/core/schemas.ts`.
 - Produces: `describeFeature(args: { text: string; promptText?: string; model: string; llm: Llm }): Promise<Feature>` — returns a feature with `status: "pending"` regardless of what the model said; if `promptText` is given, `prompt_file` is **not** set here (the CLI sets it from the flag); throws `ForgeError` if `text` is blank.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 `tests/fixtures/describe-response.json` — a recorded shape the model returns (the generator schema is the feature without `status`):
 
@@ -1083,11 +1083,11 @@ describe("describeFeature", () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `bun test tests/core/describe.test.ts` — Expected: FAIL, module not found.
 
-- [ ] **Step 3: Implement describe.ts**
+- [x] **Step 3: Implement describe.ts**
 
 `src/core/describe.ts`:
 
@@ -1115,11 +1115,11 @@ export async function describeFeature(args: DescribeArgs): Promise<Feature> {
 }
 ```
 
-- [ ] **Step 4: Run tests and lint**
+- [x] **Step 4: Run tests and lint**
 
 Run: `bun test` — Expected: pass. Run: `bun run lint` — Expected: clean.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/core/describe.ts tests/core/describe.test.ts tests/fixtures/describe-response.json
@@ -1138,7 +1138,7 @@ git commit -m "Add describe: normalise a free-text description into a pending fe
 - Produces (ids.ts): `slugify(text: string): string` — lowercase, non-alphanumerics to `-`, collapse, trim, at most 40 chars; `nextCaseId(scenarioId: string, existing: Case[]): string` — `<scenarioId>-<nn>` where nn is one more than the highest existing suffix for that scenario, two digits.
 - Produces (scenarios.ts): `enumerateScenarios(args: { feature: Feature; existing: Scenario[]; kinds?: Kind[]; more?: number; model: string; llm: Llm }): Promise<Scenario[]>` — returns `existing` (untouched, in order) followed by new scenarios with `status: "pending"`, ids slugified from the model's id and made unique against existing ids by appending `-2`, `-3`…; throws `ForgeError` when `kinds` is not given and the model's list lacks any kind, naming the missing kinds; when `more` is given, asks for that many additional scenarios and skips the coverage check; throws `ForgeError` when the model returns zero scenarios.
 
-- [ ] **Step 1: Write the failing ids tests**
+- [x] **Step 1: Write the failing ids tests**
 
 `tests/core/ids.test.ts`:
 
@@ -1164,7 +1164,7 @@ describe("nextCaseId", () => {
 });
 ```
 
-- [ ] **Step 2: Implement ids.ts**
+- [x] **Step 2: Implement ids.ts**
 
 `src/core/ids.ts`:
 
@@ -1194,7 +1194,7 @@ export function nextCaseId(scenarioId: string, existing: Case[]): string {
 
 Run: `bun test tests/core/ids.test.ts` — Expected: pass (the `"  --Já--  "` case: `á` is not `[a-z0-9]` so it becomes `j`; keep the test as the documented behaviour — accents are dropped, not transliterated).
 
-- [ ] **Step 3: Write the scenarios template**
+- [x] **Step 3: Write the scenarios template**
 
 `templates/scenarios.md`:
 
@@ -1224,7 +1224,7 @@ Already existing scenarios (do not repeat them, complement them):
 </existing>
 ```
 
-- [ ] **Step 4: Write the failing scenarios tests**
+- [x] **Step 4: Write the failing scenarios tests**
 
 `tests/fixtures/scenarios-response.json`:
 
@@ -1302,11 +1302,11 @@ describe("enumerateScenarios", () => {
 });
 ```
 
-- [ ] **Step 5: Run to verify it fails**
+- [x] **Step 5: Run to verify it fails**
 
 Run: `bun test tests/core/scenarios.test.ts` — Expected: FAIL, module not found.
 
-- [ ] **Step 6: Implement scenarios.ts**
+- [x] **Step 6: Implement scenarios.ts**
 
 `src/core/scenarios.ts`:
 
@@ -1375,11 +1375,11 @@ export async function enumerateScenarios(args: EnumerateScenariosArgs): Promise<
 }
 ```
 
-- [ ] **Step 7: Run tests and lint**
+- [x] **Step 7: Run tests and lint**
 
 Run: `bun test` — Expected: pass. Run: `bun run lint` — Expected: clean.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src/core/scenarios.ts src/core/ids.ts templates/scenarios.md tests/core/scenarios.test.ts tests/core/ids.test.ts tests/fixtures/scenarios-response.json
@@ -1397,7 +1397,7 @@ git commit -m "Add scenarios: enumerate with mandatory kind coverage and merge w
 - Consumes: `Llm`, templates, `Feature`, `Scenario`, `Case`, `ExpectedSchema`, `nextCaseId`.
 - Produces: `generateCases(args: { feature: Feature; scenario: Scenario; existing: Case[]; n: number; model: string; llm: Llm }): Promise<Case[]>` — returns `existing` followed by new cases; new cases get ids from `nextCaseId`, `status: "pending"`, `generated_by: args.model`; the model's output schema is `{ cases: [{ input: Record<string,string>, expected: Expected }] }` where `expected` must match the scenario's oracle (label → `label` present and inside `feature.output.labels`; fields → `fields` present; rubric → `rubric` present) — a case violating that is dropped and counted, and if **all** are dropped the function throws `ForgeError` explaining why; a new case whose `input` deep-equals an existing case's input is dropped (exact dedupe); input keys must match `feature.inputs` names exactly or the case is dropped; throws `ForgeError` if the scenario is not `approved`/`edited`.
 
-- [ ] **Step 1: Write the cases template**
+- [x] **Step 1: Write the cases template**
 
 `templates/cases.md`:
 
@@ -1425,7 +1425,7 @@ Existing cases for this scenario, to avoid repeating (inputs only):
 </existing>
 ```
 
-- [ ] **Step 2: Write the failing tests**
+- [x] **Step 2: Write the failing tests**
 
 `tests/fixtures/cases-response.json`:
 
@@ -1514,11 +1514,11 @@ describe("generateCases", () => {
 });
 ```
 
-- [ ] **Step 3: Run to verify it fails**
+- [x] **Step 3: Run to verify it fails**
 
 Run: `bun test tests/core/cases.test.ts` — Expected: FAIL, module not found.
 
-- [ ] **Step 4: Implement cases.ts**
+- [x] **Step 4: Implement cases.ts**
 
 `src/core/cases.ts`:
 
@@ -1624,11 +1624,11 @@ export async function generateCases(args: GenerateCasesArgs): Promise<Case[]> {
 }
 ```
 
-- [ ] **Step 5: Run tests and lint**
+- [x] **Step 5: Run tests and lint**
 
 Run: `bun test` — Expected: pass. Run: `bun run lint` — Expected: clean.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/core/cases.ts templates/cases.md tests/core/cases.test.ts tests/fixtures/cases-response.json
@@ -1646,7 +1646,7 @@ git commit -m "Add cases: generate oracle-shaped cases per scenario without touc
 - Consumes: `Llm`, templates, `Case`.
 - Produces: `dedupeCases(args: { cases: Case[]; model: string; llm: Llm }): Promise<Case[]>` — the model returns `{ duplicates: [{ id, duplicate_of }] }`; the function sets `duplicate_of` on cases whose ids exist, ignores pairs naming unknown ids or self-pairs, never marks a case that is `approved`/`edited` (reviewed cases are the canonical ones — a pending case may point at a reviewed one, not the reverse), clears nothing that was already set unless the model repeats it, and returns the same array order. With fewer than two cases it returns the input unchanged without calling the model.
 
-- [ ] **Step 1: Write the dedupe template**
+- [x] **Step 1: Write the dedupe template**
 
 `templates/dedupe.md`:
 
@@ -1661,7 +1661,7 @@ Cases:
 </cases>
 ```
 
-- [ ] **Step 2: Write the failing tests**
+- [x] **Step 2: Write the failing tests**
 
 `tests/fixtures/dedupe-response.json`:
 
@@ -1707,11 +1707,11 @@ describe("dedupeCases", () => {
 });
 ```
 
-- [ ] **Step 3: Run to verify it fails**
+- [x] **Step 3: Run to verify it fails**
 
 Run: `bun test tests/core/dedupe.test.ts` — Expected: FAIL, module not found.
 
-- [ ] **Step 4: Implement dedupe.ts**
+- [x] **Step 4: Implement dedupe.ts**
 
 `src/core/dedupe.ts`:
 
@@ -1751,11 +1751,11 @@ export async function dedupeCases(args: DedupeArgs): Promise<Case[]> {
 }
 ```
 
-- [ ] **Step 5: Run tests and lint**
+- [x] **Step 5: Run tests and lint**
 
 Run: `bun test` — Expected: pass. Run: `bun run lint` — Expected: clean.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/core/dedupe.ts templates/dedupe.md tests/core/dedupe.test.ts tests/fixtures/dedupe-response.json
@@ -1773,7 +1773,7 @@ git commit -m "Add dedupe: mark likely semantic duplicates within a scenario"
 - Consumes: `Feature`, `Scenario`, `Case`, `Oracle`, `nextCaseId`.
 - Produces: `importCases(args: { feature: Feature; jsonl: string; source: string; existing: Case[]; oracle?: Oracle }): { cases: Case[]; scenario: Scenario; skipped: { line: number; reason: string }[] }` — parses `jsonl` line by line (blank lines ignored); each line must be a JSON object whose keys are exactly the feature's input names with string values, otherwise it is skipped with the line number and reason; accepted lines become cases with ids `imported-<nn>`, `scenario: "imported"`, no `expected`, `status: "pending"`, `generated_by: "import:<source>"`; exact duplicates of existing inputs are skipped; the returned `scenario` is `{ id: "imported", kind: "happy", oracle, description: "Real inputs imported from application logs", status: "approved" }` where `oracle` is the argument or derived from `feature.output.kind` (`label` → `label`, `json` → `fields`, `text` → `rubric`); throws `ForgeError` if no line was accepted, listing the reasons.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `tests/core/import.test.ts`:
 
@@ -1824,11 +1824,11 @@ describe("importCases", () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `bun test tests/core/import.test.ts` — Expected: FAIL, module not found.
 
-- [ ] **Step 3: Implement import.ts**
+- [x] **Step 3: Implement import.ts**
 
 `src/core/import.ts`:
 
@@ -1917,11 +1917,11 @@ export function importCases(args: ImportArgs): ImportResult {
 }
 ```
 
-- [ ] **Step 4: Run tests and lint**
+- [x] **Step 4: Run tests and lint**
 
 Run: `bun test` — Expected: pass. Run: `bun run lint` — Expected: clean.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/core/import.ts tests/core/import.test.ts
@@ -1940,7 +1940,7 @@ git commit -m "Add import: real inputs from JSONL into pending cases without exp
 - Produces (core/review.ts): `type Decision = "approve" | "reject" | "edit" | "skip"`; `type PendingItem = { kind: "feature"; item: Feature } | { kind: "scenario"; item: Scenario } | { kind: "case"; item: Case }`; `pendingItems(feature: Feature, scenarios: Scenario[], cases: Case[]): PendingItem[]` — feature first if pending, then pending scenarios in file order, then pending cases grouped by scenario in file order, with a case that has `duplicate_of` placed immediately after the case it points at when that one is in the list; `applyDecision<T extends Feature | Scenario | Case>(item: T, decision: Decision, edited?: T): T` — approve → `status: "approved"`; reject → `status: "rejected"` (throws `ForgeError` for a feature, which cannot be rejected); edit → the `edited` argument validated with the matching schema and forced to `status: "edited"` (throws if `edited` is missing or invalid); skip → the item unchanged; `withExpected(c: Case, expected: Expected): Case` — validates and sets.
 - Produces (cli/review-loop.ts): `runReviewLoop(args: { items: PendingItem[]; ask: (question: string, choices: string[]) => Promise<string>; openEditor: (yamlText: string) => Promise<string>; askExpected: (c: Case, oracle: Oracle) => Promise<Expected>; oracleOf: (scenarioId: string) => Oracle; print: (line: string) => void }): Promise<{ decisions: { kind: PendingItem["kind"]; id: string; item: Feature | Scenario | Case }[]; summary: { approved: number; rejected: number; edited: number; skipped: number } }>` — for each item prints a rendering (YAML), asks `approve/reject/edit/skip`; for a case without `expected` under approve or edit, calls `askExpected` first; on edit, calls `openEditor` with the item as YAML and parses the result (an invalid edit prints the error and re-asks for the same item); returns every decided item (skipped ones excluded) plus counts.
 
-- [ ] **Step 1: Write the failing core tests**
+- [x] **Step 1: Write the failing core tests**
 
 `tests/core/review.test.ts`:
 
@@ -1990,7 +1990,7 @@ describe("withExpected", () => {
 });
 ```
 
-- [ ] **Step 2: Implement core/review.ts**
+- [x] **Step 2: Implement core/review.ts**
 
 `src/core/review.ts`:
 
@@ -2060,7 +2060,7 @@ export function withExpected(c: Case, expected: Expected): Case {
 
 Run: `bun test tests/core/review.test.ts` — Expected: pass.
 
-- [ ] **Step 3: Write the failing loop tests**
+- [x] **Step 3: Write the failing loop tests**
 
 `tests/cli/review-loop.test.ts`:
 
@@ -2112,7 +2112,7 @@ describe("runReviewLoop", () => {
 });
 ```
 
-- [ ] **Step 4: Implement cli/review-loop.ts**
+- [x] **Step 4: Implement cli/review-loop.ts**
 
 `src/cli/review-loop.ts`:
 
@@ -2179,11 +2179,11 @@ export async function runReviewLoop(args: ReviewLoopArgs): Promise<ReviewLoopRes
 }
 ```
 
-- [ ] **Step 5: Run tests and lint**
+- [x] **Step 5: Run tests and lint**
 
 Run: `bun test` — Expected: pass. Run: `bun run lint` — Expected: clean.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/core/review.ts src/cli/review-loop.ts tests/core/review.test.ts tests/cli/review-loop.test.ts
@@ -2211,7 +2211,7 @@ git commit -m "Add review: pure decisions and an interactive loop with injectabl
   - `import <file.jsonl> [--oracle o]`
   - `review [--scenario id] [--only cases] [--all]` — `--all` requires `--scenario` and approves every pending case of it without asking.
 
-- [ ] **Step 1: Write the failing end-to-end test**
+- [x] **Step 1: Write the failing end-to-end test**
 
 `tests/fixtures/cli-responses.json` — the fake provider file for the whole flow (the strings are the same shapes recorded in earlier fixtures):
 
@@ -2321,11 +2321,11 @@ describe("forge CLI end to end (fake provider)", () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `bun test tests/cli/main.test.ts` — Expected: FAIL, module not found.
 
-- [ ] **Step 3: Implement context.ts and prompts.ts**
+- [x] **Step 3: Implement context.ts and prompts.ts**
 
 `src/cli/context.ts`:
 
@@ -2424,7 +2424,7 @@ export async function openInEditor(yamlText: string, env: Record<string, string 
 }
 ```
 
-- [ ] **Step 4: Implement the six commands**
+- [x] **Step 4: Implement the six commands**
 
 `src/cli/commands/describe.ts`:
 
@@ -2611,7 +2611,7 @@ export async function reviewCommand(args: string[], ctx: CliContext): Promise<vo
 }
 ```
 
-- [ ] **Step 5: Implement main.ts**
+- [x] **Step 5: Implement main.ts**
 
 `src/cli/main.ts`:
 
@@ -2677,7 +2677,7 @@ if (import.meta.main) {
 }
 ```
 
-- [ ] **Step 6: Run the tests, then the CLI by hand with the fake provider**
+- [x] **Step 6: Run the tests, then the CLI by hand with the fake provider**
 
 Run: `bun test` — Expected: pass, coverage above threshold (prompts.ts `openInEditor` and `createContext`'s real stdin are the expected uncovered lines; if the functions threshold fails because of them, move `openInEditor` into its own file `src/cli/editor.ts` and exclude nothing — instead add a test that runs it with `EDITOR=true` (the `true` binary exits 0 and leaves the file unchanged) and asserts the text round-trips).
 
@@ -2689,7 +2689,7 @@ cd $(mktemp -d) && FORGE_MODEL=fake/$OLDPWD/tests/fixtures/cli-responses.json bu
 
 Expected: the feature YAML printed with `status: pending`.
 
-- [ ] **Step 7: Lint and commit**
+- [x] **Step 7: Lint and commit**
 
 Run: `bun run lint` — Expected: clean.
 
@@ -2710,7 +2710,7 @@ git commit -m "Add the forge CLI: describe, scenarios, cases, dedupe, import, re
 - Consumes: the CLI from Task 10.
 - Produces: a green CI on GitHub with jobs `test` and `lint`, and the two READMEs.
 
-- [ ] **Step 1: Write the live test, off by default**
+- [x] **Step 1: Write the live test, off by default**
 
 `tests/live/describe-scenarios.live.test.ts`:
 
@@ -2746,11 +2746,11 @@ describe.skipIf(!live)("live: describe and scenarios against a real model", () =
 
 Add to `bunfig.toml` under `[test]`: nothing — `describe.skipIf` keeps it green offline. Add to `package.json` scripts: `"test:live": "FORGE_LIVE=1 bun test tests/live"`.
 
-- [ ] **Step 2: Run it once for real (costs cents; needs GOOGLE_API_KEY)**
+- [x] **Step 2: Run it once for real (costs cents; needs GOOGLE_API_KEY)**
 
 Run: `GOOGLE_API_KEY=… bun run test:live` — Expected: pass; paste the `scenarios:` summary line into the task note along with the token count from `.forge/usage.jsonl` of the temp dir. If Gemini answers 503, retry once; if the coverage check fails because the model skipped a kind, that is a real finding about the template — note it, and either strengthen `templates/scenarios.md` or accept and document.
 
-- [ ] **Step 3: Write CI**
+- [x] **Step 3: Write CI**
 
 `.github/workflows/ci.yml`:
 
@@ -2787,7 +2787,7 @@ jobs:
 
 The coverage badge: the `test` job already fails below the threshold (that is the honest badge — it is the CI status of a job that enforces coverage). Do not add a third-party coverage service in this task; note it in the backlog if Alberto wants a percentage badge.
 
-- [ ] **Step 4: Write the READMEs and license**
+- [x] **Step 4: Write the READMEs and license**
 
 `LICENSE`: the MIT text with `Copyright (c) 2026 Alberto de Sá Cavalcanti de Albuquerque`.
 
@@ -2843,7 +2843,7 @@ MIT.
 
 `README.pt.md`: the same content in Portuguese, starting with the same flag line (`🇺🇸 [English](README.md) · 🇧🇷 [Português](README.pt.md)`) and the same badge.
 
-- [ ] **Step 5: Run everything, commit**
+- [x] **Step 5: Run everything, commit**
 
 Run: `bun test && bun run lint` — Expected: green.
 
