@@ -35,16 +35,7 @@ Decisions taken and deliberately deferred while executing `plans/2026-09-14-core
 
 Findings triaged as too small to fix in the review's own fix wave. Each is one line because each is one place to look.
 
-- The flaky and failing tables filter `report.cases` by the display string `"<case> @ <model>"` rather than by the pair, so a case id containing ` @ ` could collide.
-- The ragged padding in the judge-disagreement table (a row with fewer judges than the widest) is untested.
-- Unmatched rows are labelled by `testIdx`, which repeats across repeats: with `repeat > 1` two unmatched rows can carry the same number.
-- One `Disagreement` per row means a case that disagrees on every repeat inflates the headline count by `repeat`.
-- The coverage sentence says "approved scenarios" while the count includes edited ones.
-- The zero-matched `ForgeError` names no observed case id, so it cannot be told from a typo in one id.
 - The README's command block exports one `FORGE_MODEL` while the example's `describe` and `scenarios` ran on others; the table above it says so, the block does not.
 - `biome.json` negates one level deep only, so a nested ignore pattern would not apply.
-- A case that passes one repeat and errors on another reads as `flaky`, although nothing about it was unstable.
-- A judge provider with no label comes back named by its model string rather than by the forge's name.
 - `examples/moonlighter-classify-email/.forge/usage.jsonl` is gitignored on purpose (it carries per-call figures from the run machine); the example README now says so.
 - The `promptfoo-validate` CI job downloads 2 GB of promptfoo on every push and has not yet been observed passing on `ubuntu-latest`. Suggestion: `actions/cache` on `~/.bun/install/cache`.
-- `ReportSchema.failing` is required, so `forge report --baseline` refuses a `report.json` written before 126ba62 with `failing: Required`; `.default([])` would keep old baselines readable at no cost (the diff never reads the field). Parked at the end of plan 2 because the project is pre-release and the only committed report was regenerated.
