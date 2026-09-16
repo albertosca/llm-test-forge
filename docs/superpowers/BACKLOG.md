@@ -12,10 +12,7 @@ Deferred on purpose during the design of 2026-09-14 (see `specs/2026-09-14-llm-t
 
 Decisions taken and deliberately deferred while executing `plans/2026-09-14-core-pipeline.md`. They lived in `.superpowers/`, which is gitignored, so they are written down here before that branch merges and they evaporate. None of them is a known wrong answer; each is a place where the answer was postponed.
 
-- **`pendingItems` places duplicates single-hop only** — a case carrying `duplicate_of` is moved next to its target in one left-to-right pass; chains of duplicates-of-duplicates come out order-dependent. Ruled on, documented in the function's own doc comment, and pinned by a test. Revisit only if real suites grow chains.
 - **The coverage gate is blind to branches** — bun measures lines and functions and tracks no branch coverage, so a file at 100% can still have guard arms nobody executed. Five of the six defects the whole-branch review found were exactly that. Either move to a tool that measures branches, or treat the number as a floor and keep hunting by hand.
-- **Only one of the three badges the spec asks for is shipped** — the README carries the CI badge. A lint badge is honest, since a real `lint` job exists in `ci.yml`, but GitHub's `badge.svg` is per workflow rather than per job, so it needs the lint job split into its own workflow file. A coverage badge needs a service (Codecov or similar) that the project does not use yet.
-- **Test scaffolding is in the production import graph** — `src/llm/generate.ts` imports `MockLanguageModelV4` from `ai/test` to back the documented `fake/<file>` provider. It works and the provider is a real feature, not a test-only hook, but shipping a dependency's test module deserves a deliberate yes or no.
 
 ## Carried out of the run-half execution ledger (2026-09-16)
 
