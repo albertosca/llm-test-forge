@@ -118,7 +118,7 @@ Walks pending items in order: feature, scenarios, cases grouped by scenario, wit
 
 ### `estimate`
 
-Before any call: input tokens per case (provider tokenizer when available, characters ÷ 4 otherwise) × cases × target models × repeat, plus judge cost on rubric cases only (one call per judge listed in the suite), priced by `prices.yaml` (versioned in this repo, editable by the user, with a dated header). Output in tokens and dollars per model, with the price-table date and an explicit note that output size is a guess derived from `output.kind`. A model missing from `prices.yaml` is priced as the closest known model and the line is marked.
+Before any call: input tokens per case (provider tokenizer when available, characters ÷ 4 otherwise) × cases × target models × repeat, plus judge cost on rubric cases only (one call per judge listed in the suite), priced by `prices.yaml` (versioned in this repo, editable by the user, with a dated header). Output in tokens and dollars per model, with the price-table date and an explicit note that output size is a guess derived from `output.kind`. A model missing from `prices.yaml` whose provider has rows is priced as the closest listed model of that provider and the line is marked; a model whose provider has no row at all is not priced: its line says so, the total excludes it and says how many lines it left out.
 
 ### `emit`
 
