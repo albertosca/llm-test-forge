@@ -27,3 +27,17 @@ Decisions taken and deliberately deferred while executing `plans/2026-09-14-core
 Findings triaged as too small to fix in the review's own fix wave. Each is one line because each is one place to look.
 
 - The `promptfoo-validate` CI job downloads 2 GB of promptfoo on every push and has not yet been observed passing on `ubuntu-latest`. Suggestion: `actions/cache` on `~/.bun/install/cache`.
+
+## Carried out of the backlog-sweep execution ledger (2026-09-16)
+
+Minors ruled on and deliberately deferred while executing the backlog sweep. They lived in `.superpowers/`, which is gitignored, so they are written down here before the branch merges and they evaporate. None is a known wrong answer; each is a place where the answer was postponed.
+
+- **A `forge move` verb** — renaming a scenario is refused in review since 55a1cb5, because a scenario's id names `.forge/cases/<id>.yaml`; renaming a case's `scenario` is refused for the same reason. Both refusals send the person to `mv` plus a hand edit. The honest way to support either is a verb that moves the file and rewrites the ids it contains in one write, not a review decision that half-applies across files nobody opened.
+- **`report.failing` strings can collide on a case id containing ` @ `** — the list holds `"<case> @ <model>"`, so two different pairs can spell the same entry. The Markdown tables already pick their rows by stability rather than by looking the string up, so nothing reads it ambiguously today. Structured pairs would fix it and would break every `--baseline` written so far.
+- **A scenario whose oracle changed but has no cases file prints no "changed oracle" line** — the re-open pass walks the cases files, so a scenario with none is silent about a change that will matter as soon as `cases` runs for it.
+- **`review --all` does not check a case's `scenario` field against the file it lives in** — a hand-edited `.forge/cases/<id>.yaml` holding a case that names another scenario is reviewed as if it belonged there.
+- **`renamedCases` is global across cases files** — `duplicate_of` pointers are rewritten from one map for the whole pass, so a rename in one file could in principle follow a pointer in another. Case ids are scenario-prefixed today, which makes the collision unlikely rather than impossible.
+- **The two `as` narrowings in `onDecided`** — `item as Feature` and `item as Scenario`, which exist because the callback takes a `kind` and a bare item rather than a discriminated union. A `PendingItem`-shaped argument would remove both without a cast.
+- **The duplicated `editorReplacing` test helper** — `tests/cli/main.test.ts` defines the same helper four times, once per `describe` block that needs it (lines 820, 1328, 1711, 1896). One definition at the top of the file would do.
+- **`src/cli/commands/review.ts` is 358 lines and wants a split** — the `--all` path and the write-back are each a module's worth of work sitting inside the command.
+- **`report.json`'s `failing` key means failing, errored or partly-errored** — the name says less than the list holds. Renaming it would break `--baseline` for every report written so far, so the doc comment carries the meaning instead.
