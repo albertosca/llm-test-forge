@@ -10,7 +10,7 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-14-llm-test-forge-design.md` (unchanged; this plan tightens the implementation, it adds no verb). Every item below cites the backlog line it closes by its number in the list Alberto approved on 2026-09-16.
 
-**Status:** Task 1 ✓ (5dda4f7, f40623c) · Task 2 ✓ (af2286a, 764974e) · Task 3 ✓ (fb96d6a) · Task 4 ✓ (5f7148e, 55a1cb5) · Task 5 em andamento
+**Status:** Task 1 ✓ (5dda4f7, f40623c) · Task 2 ✓ (af2286a, 764974e) · Task 3 ✓ (fb96d6a) · Task 4 ✓ (5f7148e, 55a1cb5) · Task 5 ✓ (a94780d, 770b54f) · revisão whole-branch em andamento
 
 ## Global Constraints
 
@@ -158,17 +158,18 @@ Each item has: **#n** (its number in Alberto's list), the backlog sentence in sh
 
 **Items:**
 
-- [ ] **#24 The example's shim reports zero target tokens.** moonlighter's `make_api_caller` calls `record_call(seconds, input_tokens=…, output_tokens=…)` imported into `moonlighter.core.llm` from `moonlighter.core.metrics`. In `run_application`, before calling `classify_response`, install a capturing wrapper: `import moonlighter.core.llm as llm_module`; save `llm_module.record_call`; set `llm_module.record_call = lambda seconds, input_tokens=0, output_tokens=0: captured.update(...)` (call the original too); restore in `finally`; return the captured counts as `input_tokens`/`output_tokens`. Keep it inside `run_application` so the shim template stays generic. Verify with a throwaway `python3` run that one call through the venv reports non-zero counts (Anthropic key sourced with `set -a; source ~/.config/anthropic/vim-ai-autocomplete.env; set +a`; never printed).
+- [x] **#24 The example's shim reports zero target tokens.** moonlighter's `make_api_caller` calls `record_call(seconds, input_tokens=…, output_tokens=…)` imported into `moonlighter.core.llm` from `moonlighter.core.metrics`. In `run_application`, before calling `classify_response`, install a capturing wrapper: `import moonlighter.core.llm as llm_module`; save `llm_module.record_call`; set `llm_module.record_call = lambda seconds, input_tokens=0, output_tokens=0: captured.update(...)` (call the original too); restore in `finally`; return the captured counts as `input_tokens`/`output_tokens`. Keep it inside `run_application` so the shim template stays generic. Verify with a throwaway `python3` run that one call through the venv reports non-zero counts (Anthropic key sourced with `set -a; source ~/.config/anthropic/vim-ai-autocomplete.env; set +a`; never printed).
 
-- [ ] **Step: one eval, one report.** From the example directory with the key sourced, `MOONLIGHTER_HOME=$(mktemp -d) PROMPTFOO_DISABLE_TELEMETRY=1 PROMPTFOO_DISABLE_UPDATE=1`, `target.python` temporarily at `/Users/albertosca/Programming/moonlighter/.venv/bin/python`: `bunx promptfoo@0.123.0 eval -c .forge/promptfooconfig.yaml -o results.json --no-cache --no-progress-bar -j 2`, then `bun ../../src/cli/bin.ts report results.json`. Set `target.python` back to `.venv/bin/python`. Read `report.md`: the target cost line must now carry real tokens and a dollar figure with an error percent against the estimate; `Target usage: reported by the shim.` Cases may pass or fail differently from the previous run (the models are nondeterministic); whatever happens stays and the README says so. Cost: cents.
+- [x] **Step: one eval, one report.**
+  → third run: 46/48, no flaky case; target cost real $0.046218 against $0.051836 estimated (−10.8%); judge −23.9% after the #23 recalibration. The real-file guard went red on the regenerated results.json and was updated, which is the guard proving itself. From the example directory with the key sourced, `MOONLIGHTER_HOME=$(mktemp -d) PROMPTFOO_DISABLE_TELEMETRY=1 PROMPTFOO_DISABLE_UPDATE=1`, `target.python` temporarily at `/Users/albertosca/Programming/moonlighter/.venv/bin/python`: `bunx promptfoo@0.123.0 eval -c .forge/promptfooconfig.yaml -o results.json --no-cache --no-progress-bar -j 2`, then `bun ../../src/cli/bin.ts report results.json`. Set `target.python` back to `.venv/bin/python`. Read `report.md`: the target cost line must now carry real tokens and a dollar figure with an error percent against the estimate; `Target usage: reported by the shim.` Cases may pass or fail differently from the previous run (the models are nondeterministic); whatever happens stays and the README says so. Cost: cents.
 
-- [ ] **#37 The README command block exports one model while `describe`/`scenarios` ran on others.** Put a trailing comment on those two lines (`# ran with FORGE_MODEL=google/gemini-3.6-flash on the first day`, `# ran with anthropic/claude-haiku-4-5`) and refresh every number the new run changed (estimate block, eval line, report headline, cost table, the three failure write-ups if they changed). The README's account of the first run's shim defect stays.
+- [x] **#37 The README command block exports one model while `describe`/`scenarios` ran on others.** Put a trailing comment on those two lines (`# ran with FORGE_MODEL=google/gemini-3.6-flash on the first day`, `# ran with anthropic/claude-haiku-4-5`) and refresh every number the new run changed (estimate block, eval line, report headline, cost table, the three failure write-ups if they changed). The README's account of the first run's shim defect stays.
 
-- [ ] **#38 `biome.json` negation is one level deep.** `"!examples/**/results.json"`. Verify: `bun run lint` still passes and `bunx biome check examples/moonlighter-classify-email/results.json` reports the file ignored.
+- [x] **#38 `biome.json` negation is one level deep.** `"!examples/**/results.json"`. Verify: `bun run lint` still passes and `bunx biome check examples/moonlighter-classify-email/results.json` reports the file ignored.
 
-- [ ] **Step: records.** Remove #24, #37, #38 and #43 (`usage.jsonl`, a note with no work) from `BACKLOG.md`. Leave every group-B item. The `PROJECT-LOG.md` entry is written by the controller after the whole-branch review.
+- [x] **Step: records.** Remove #24, #37, #38 and #43 (`usage.jsonl`, a note with no work) from `BACKLOG.md`. Leave every group-B item. The `PROJECT-LOG.md` entry is written by the controller after the whole-branch review.
 
-- [ ] **Step: run, commit.** `bun run check` green; `git grep -n "sk-ant\|AIza"` empty. Commit: `Make the example's shim report moonlighter's real token usage and re-run its eval`.
+- [x] **Step: run, commit.** `bun run check` green; `git grep -n "sk-ant\|AIza"` empty. Commit: `Make the example's shim report moonlighter's real token usage and re-run its eval`.
 
 ---
 
