@@ -26,7 +26,6 @@ Decisions taken and deliberately deferred while executing `plans/2026-09-14-core
 
 Findings triaged as too small to fix in the review's own fix wave. Each is one line because each is one place to look.
 
-- The `promptfoo-validate` CI job downloads 2 GB of promptfoo on every push and has not yet been observed passing on `ubuntu-latest`. Suggestion: `actions/cache` on `~/.bun/install/cache`.
 
 ## Carried out of the backlog-sweep execution ledger (2026-09-16)
 
