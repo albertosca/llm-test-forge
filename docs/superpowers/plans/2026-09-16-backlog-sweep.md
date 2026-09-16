@@ -10,7 +10,7 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-14-llm-test-forge-design.md` (unchanged; this plan tightens the implementation, it adds no verb). Every item below cites the backlog line it closes by its number in the list Alberto approved on 2026-09-16.
 
-**Status:** Task 1 ✓ (5dda4f7, f40623c) · Task 2 ✓ (af2286a, 764974e) · Task 3 em andamento
+**Status:** Task 1 ✓ (5dda4f7, f40623c) · Task 2 ✓ (af2286a, 764974e) · Task 3 ✓ (fb96d6a) · Task 4 em andamento
 
 ## Global Constraints
 
@@ -94,27 +94,28 @@ Each item has: **#n** (its number in Alberto's list), the backlog sentence in sh
 
 **Items:**
 
-- [ ] **#45 `ReportSchema.failing` required breaks old baselines.** `failing: z.array(z.string()).default([])`. Test: `ReportSchema.parse` of a report object without `failing` yields `failing: []`; an e2e `--baseline` with a `report.json` from which `failing` was deleted exits 0. Mutation: drop `.default([])` → red.
+- [x] **#45 `ReportSchema.failing` required breaks old baselines.** `failing: z.array(z.string()).default([])`. Test: `ReportSchema.parse` of a report object without `failing` yields `failing: []`; an e2e `--baseline` with a `report.json` from which `failing` was deleted exits 0. Mutation: drop `.default([])` → red.
 
-- [ ] **#30 Flaky/failing tables filter by display string.** `caseSection` takes `pick: (c: CaseRun) => boolean` and filters `report.cases` by stability; `failing`/`flaky` arrays stay as they are (they are the JSON summary). Test in `tests/report/markdown.test.ts`: a case whose id contains ` @ ` appears exactly once in the right table. Mutation: revert to `keys.includes` → red.
+- [x] **#30 Flaky/failing tables filter by display string.** `caseSection` takes `pick: (c: CaseRun) => boolean` and filters `report.cases` by stability; `failing`/`flaky` arrays stay as they are (they are the JSON summary). Test in `tests/report/markdown.test.ts`: a case whose id contains ` @ ` appears exactly once in the right table. Mutation: revert to `keys.includes` → red.
 
-- [ ] **#35 Coverage sentence says "approved" while counting edited.** Rename the field `coverage.approvedScenarios` → `coverage.reviewedScenarios` (schema, builder, renderer, tests, the real-file guard) and the sentence to `Coverage: N of M reviewed scenarios ran`. Test: literal line. Mutation: revert the word in the renderer → red.
+- [x] **#35 Coverage sentence says "approved" while counting edited.** Rename the field `coverage.approvedScenarios` → `coverage.reviewedScenarios` (schema, builder, renderer, tests, the real-file guard) and the sentence to `Coverage: N of M reviewed scenarios ran`. Test: literal line. Mutation: revert the word in the renderer → red.
 
-- [ ] **#33 Unmatched rows labelled by `testIdx`, which repeats.** Label becomes `row <position in results.results> (testIdx <n>): <model>: <case…>` where position is the 0-based index in the array. Update the two wording tests and the real-file guard if it asserts unmatched. Test: two unmatched rows with the same `testIdx` produce two distinct labels. Mutation: revert to `testIdx` only → red.
+- [x] **#33 Unmatched rows labelled by `testIdx`, which repeats.** Label becomes `row <position in results.results> (testIdx <n>): <model>: <case…>` where position is the 0-based index in the array. Update the two wording tests and the real-file guard if it asserts unmatched. Test: two unmatched rows with the same `testIdx` produce two distinct labels. Mutation: revert to `testIdx` only → red.
 
-- [ ] **#36 Zero-matched error names no observed id.** Message: `no result matches a case in .forge/cases (first metadata.case seen: "<id>", <n> rows); was this results.json produced from a config forge emitted?` — with `none` when no row has a string `metadata.case`. Test: both wordings. Mutation: drop the observed id → red.
+- [x] **#36 Zero-matched error names no observed id.** Message: `no result matches a case in .forge/cases (first metadata.case seen: "<id>", <n> rows); was this results.json produced from a config forge emitted?` — with `none` when no row has a string `metadata.case`. Test: both wordings. Mutation: drop the observed id → red.
 
-- [ ] **#40 An unlabelled provider becomes `file://forge_target.py`.** `modelOf(row)`: `row.provider.label ?? fromPromptfooProvider(row.provider.id) ?? row.provider.id`. Test: a row with `provider: { id: "anthropic:messages:claude-haiku-4-5" }` and no label → model `anthropic/claude-haiku-4-5`; the existing `file://` test keeps its raw id. Mutation: drop the middle term → red.
+- [x] **#40 An unlabelled provider becomes `file://forge_target.py`.** `modelOf(row)`: `row.provider.label ?? fromPromptfooProvider(row.provider.id) ?? row.provider.id`. Test: a row with `provider: { id: "anthropic:messages:claude-haiku-4-5" }` and no label → model `anthropic/claude-haiku-4-5`; the existing `file://` test keeps its raw id. Mutation: drop the middle term → red.
 
-- [ ] **#39 A case that passes once and errors once reads as flaky.** `StabilitySchema` gains `"partly-errored"`; `stabilityOf`: `errored === runs` → errored; `errored > 0 && failed === 0 && passed > 0` → partly-errored; `passed === runs` → stable; `passed > 0` → flaky; else failing. `report.failing` (the JSON list) includes `failing`, `errored` and `partly-errored`; the Markdown section is titled `## Failing or errored cases` and its empty sentence `No failing or errored case.`; the headline label becomes `**failing or errored:** N`. Update every test literal that carried the old title/label, the example README's quoted headline (Step below) and the CLI summary line (`N failing or errored`). Tests: a pass+error pair → `partly-errored`, listed in that section, absent from the flaky one. Mutation: revert `stabilityOf` → red.
+- [x] **#39 A case that passes once and errors once reads as flaky.** `StabilitySchema` gains `"partly-errored"`; `stabilityOf`: `errored === runs` → errored; `errored > 0 && failed === 0 && passed > 0` → partly-errored; `passed === runs` → stable; `passed > 0` → flaky; else failing. `report.failing` (the JSON list) includes `failing`, `errored` and `partly-errored`; the Markdown section is titled `## Failing or errored cases` and its empty sentence `No failing or errored case.`; the headline label becomes `**failing or errored:** N`. Update every test literal that carried the old title/label, the example README's quoted headline (Step below) and the CLI summary line (`N failing or errored`). Tests: a pass+error pair → `partly-errored`, listed in that section, absent from the flaky one. Mutation: revert `stabilityOf` → red.
 
-- [ ] **#34 One `Disagreement` per row inflates the headline.** `DisagreementSchema` gains `occurrences: z.number()`; `disagreementsOf` groups by `(model, case)`, keeps the verdicts of the first disagreeing run and counts occurrences; the Markdown table gains a `runs` column with the count. Tests: two disagreeing repeats of one case → one entry with `occurrences: 2`; the headline counts 1; the real-file guard (`disagreements: []`) unchanged. Mutation: remove the grouping → red.
+- [x] **#34 One `Disagreement` per row inflates the headline.**
+  → the new column is headed `runs`, ambiguous beside the case tables' `runs`; renaming it `disagreeing runs` is deferred to the final review. `DisagreementSchema` gains `occurrences: z.number()`; `disagreementsOf` groups by `(model, case)`, keeps the verdicts of the first disagreeing run and counts occurrences; the Markdown table gains a `runs` column with the count. Tests: two disagreeing repeats of one case → one entry with `occurrences: 2`; the headline counts 1; the real-file guard (`disagreements: []`) unchanged. Mutation: remove the grouping → red.
 
-- [ ] **#31 Ragged judge padding untested.** Test only: one disagreement with three judges beside one with two → the two-judge row ends with an empty cell (`| … | judge: pass — ok | judge: fail — no |  |`). Mutation: remove the `while (cells.length < columns)` loop → red.
+- [x] **#31 Ragged judge padding untested.** Test only: one disagreement with three judges beside one with two → the two-judge row ends with an empty cell (`| … | judge: pass — ok | judge: fail — no |  |`). Mutation: remove the `while (cells.length < columns)` loop → red.
 
-- [ ] **Step: regenerate the example report offline.** From `examples/moonlighter-classify-email/`: `bun ../../src/cli/bin.ts report results.json` (no key, no eval). Read the new `report.md`; update the README's quoted headline and section names (`Failing or errored cases`, `reviewed scenarios`) and nothing else. Both files are committed.
+- [x] **Step: regenerate the example report offline.** From `examples/moonlighter-classify-email/`: `bun ../../src/cli/bin.ts report results.json` (no key, no eval). Read the new `report.md`; update the README's quoted headline and section names (`Failing or errored cases`, `reviewed scenarios`) and nothing else. Both files are committed.
 
-- [ ] **Step: run, mutate, backlog, commit.** `bun run check` green; the real-file guard in `tests/core/report.test.ts` updated where field names changed. Remove #30, #31, #33, #34, #35, #36, #39, #40, #45 from `BACKLOG.md`. Commit: `Report partly-errored cases apart from flaky ones, count judge disagreements per case, and label unmatched rows uniquely`.
+- [x] **Step: run, mutate, backlog, commit.** `bun run check` green; the real-file guard in `tests/core/report.test.ts` updated where field names changed. Remove #30, #31, #33, #34, #35, #36, #39, #40, #45 from `BACKLOG.md`. Commit: `Report partly-errored cases apart from flaky ones, count judge disagreements per case, and label unmatched rows uniquely`.
 
 ---
 
