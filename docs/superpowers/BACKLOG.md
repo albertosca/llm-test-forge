@@ -59,3 +59,4 @@ Findings triaged as too small to fix in the review's own fix wave. Each is one l
 - `renderEstimate`'s total line hard-codes column 80 with `" ".repeat(73)`; a longer model name shifts the data rows and not the total.
 - `examples/moonlighter-classify-email/.forge/usage.jsonl` is gitignored on purpose (it carries per-call figures from the run machine); the example README now says so.
 - The `promptfoo-validate` CI job downloads 2 GB of promptfoo on every push and has not yet been observed passing on `ubuntu-latest`. Suggestion: `actions/cache` on `~/.bun/install/cache`.
+- `ReportSchema.failing` is required, so `forge report --baseline` refuses a `report.json` written before 126ba62 with `failing: Required`; `.default([])` would keep old baselines readable at no cost (the diff never reads the field). Parked at the end of plan 2 because the project is pre-release and the only committed report was regenerated.
