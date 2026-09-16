@@ -10,7 +10,7 @@
 
 **Spec:** `docs/superpowers/specs/2026-09-14-llm-test-forge-design.md` (unchanged; this plan tightens the implementation, it adds no verb). Every item below cites the backlog line it closes by its number in the list Alberto approved on 2026-09-16.
 
-**Status:** Task 1 ✓ (5dda4f7, f40623c) · Task 2 ✓ (af2286a, 764974e) · Task 3 ✓ (fb96d6a) · Task 4 ✓ (5f7148e, 55a1cb5) · Task 5 ✓ (a94780d, 770b54f) · revisão whole-branch em andamento
+**Status:** Task 1 ✓ (5dda4f7, f40623c) · Task 2 ✓ (af2286a, 764974e) · Task 3 ✓ (fb96d6a) · Task 4 ✓ (5f7148e, 55a1cb5) · Task 5 ✓ (a94780d, 770b54f) · revisão whole-branch ✓ (1 Critical + 5 Important corrigidos em 42995c7..195334c) · concluído em 2026-09-16, aguardando integração
 
 ## Global Constraints
 

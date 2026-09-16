@@ -41,3 +41,5 @@ Minors ruled on and deliberately deferred while executing the backlog sweep. The
 - **The duplicated `editorReplacing` test helper** — `tests/cli/main.test.ts` defines the same helper four times, once per `describe` block that needs it (lines 820, 1328, 1711, 1896). One definition at the top of the file would do.
 - **`src/cli/commands/review.ts` is 358 lines and wants a split** — the `--all` path and the write-back are each a module's worth of work sitting inside the command.
 - **`report.json`'s `failing` key means failing, errored or partly-errored** — the name says less than the list holds. Renaming it would break `--baseline` for every report written so far, so the doc comment carries the meaning instead.
+- The re-open line in `review` appends "— edit each to give it an expected the new oracle accepts" even when it re-opened 0 cases (pinned as-is by a test); append the clause only when the count is positive.
+- `readFailure`'s doc comment in `src/core/files.ts` names `promptTokensFor` as its only external consumer; `src/report/results.ts` is a second one since the sweep.
