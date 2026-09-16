@@ -27,7 +27,7 @@ Decisions taken and deliberately deferred while executing `plans/2026-09-14-core
 
 ## Carried out of the run-half execution ledger (2026-09-16)
 
-- **Token counting is characters ÷ 4 for every provider** — `approxTokens` is the same division whatever the model is, so `estimate` is an order of magnitude, not a number to budget against. A real tokenizer (Anthropic's `count_tokens` endpoint, or a local BPE) is a follow-up. The run of 2026-09-16 came out **+63.7% over the estimate on the judge line** ($0.015010 against $0.009168): the estimate assumes a judge answers in `JUDGE_OUTPUT_TOKENS` tokens, and a judge that rejects writes a long explanation instead. The constant, not the division, is what misses here.
+- **Token counting is characters ÷ 4 for every provider** — `approxTokens` is the same division whatever the model is, so `estimate` is an order of magnitude, not a number to budget against. A real tokenizer (Anthropic's `count_tokens` endpoint, or a local BPE) is still a follow-up; nothing here replaces the division. `JUDGE_OUTPUT_TOKENS` itself is no longer a guess: calibrated on 2026-09-16 to 174, the mean of `completion + completionDetails.reasoning` over the six `llm-rubric` components of the committed example run (321 over the two of the report-fixture file), because a rejecting judge writes a long explanation and a passing one does not.
 - **The example's shim reports zero target tokens** — `examples/moonlighter-classify-email/.forge/forge_target.py` returns `input_tokens: 0`/`output_tokens: 0` because moonlighter's `make_api_caller()` does not expose usage, so the target line of `report.md`'s cost table is empty and says so. Wiring moonlighter's own `record_call` through would make that line real.
 - **The example's feature carries one `email` string where moonlighter wants three fields** — the shim's `parse_email` reconstructs `{from_, subject, body}` from that one string (fixed in 732c140, after the split-on-blank-line version dropped bodies), so it stays a parser written against the case shapes seen so far; giving the feature `from`, `subject` and `body` as three inputs would remove the guessing.
 
@@ -35,11 +35,8 @@ Decisions taken and deliberately deferred while executing `plans/2026-09-14-core
 
 Findings triaged as too small to fix in the review's own fix wave. Each is one line because each is one place to look.
 
-- `priceFor` has a double fallback that cannot both run, and prices a model it has never heard of as the table's **first** key — an `ollama/` model comes out priced as Opus. Suggestion: list ollama models at zero.
-- `guessOutputTokens` has no test for a json output whose `fields` is `[]`.
 - The flaky and failing tables filter `report.cases` by the display string `"<case> @ <model>"` rather than by the pair, so a case id containing ` @ ` could collide.
 - The ragged padding in the judge-disagreement table (a row with fewer judges than the widest) is untested.
-- The end-to-end judge estimate asserts only `> 0`, not a figure.
 - Unmatched rows are labelled by `testIdx`, which repeats across repeats: with `repeat > 1` two unmatched rows can carry the same number.
 - One `Disagreement` per row means a case that disagrees on every repeat inflates the headline count by `repeat`.
 - The coverage sentence says "approved scenarios" while the count includes edited ones.
@@ -48,8 +45,6 @@ Findings triaged as too small to fix in the review's own fix wave. Each is one l
 - `biome.json` negates one level deep only, so a nested ignore pattern would not apply.
 - A case that passes one repeat and errors on another reads as `flaky`, although nothing about it was unstable.
 - A judge provider with no label comes back named by its model string rather than by the forge's name.
-- The `emit:` and `estimate:` lines do not pluralise "cases" or "scenarios".
-- `renderEstimate`'s total line hard-codes column 80 with `" ".repeat(73)`; a longer model name shifts the data rows and not the total.
 - `examples/moonlighter-classify-email/.forge/usage.jsonl` is gitignored on purpose (it carries per-call figures from the run machine); the example README now says so.
 - The `promptfoo-validate` CI job downloads 2 GB of promptfoo on every push and has not yet been observed passing on `ubuntu-latest`. Suggestion: `actions/cache` on `~/.bun/install/cache`.
 - `ReportSchema.failing` is required, so `forge report --baseline` refuses a `report.json` written before 126ba62 with `failing: Required`; `.default([])` would keep old baselines readable at no cost (the diff never reads the field). Parked at the end of plan 2 because the project is pre-release and the only committed report was regenerated.
