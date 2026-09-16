@@ -19,15 +19,11 @@ Decisions taken and deliberately deferred while executing `plans/2026-09-14-core
 
 ## Carried out of the run-half execution ledger (2026-09-16)
 
-- **Token counting is characters ÷ 4 for every provider** — `approxTokens` is the same division whatever the model is, so `estimate` is an order of magnitude, not a number to budget against. A real tokenizer (Anthropic's `count_tokens` endpoint, or a local BPE) is still a follow-up; nothing here replaces the division. `JUDGE_OUTPUT_TOKENS` itself is no longer a guess: calibrated on 2026-09-16 to 174, the mean of `completion + completionDetails.reasoning` over the six `llm-rubric` components of the committed example run (321 over the two of the report-fixture file), because a rejecting judge writes a long explanation and a passing one does not.
-- **The example's shim reports zero target tokens** — `examples/moonlighter-classify-email/.forge/forge_target.py` returns `input_tokens: 0`/`output_tokens: 0` because moonlighter's `make_api_caller()` does not expose usage, so the target line of `report.md`'s cost table is empty and says so. Wiring moonlighter's own `record_call` through would make that line real.
+- **Token counting is characters ÷ 4 for every provider** — `approxTokens` is the same division whatever the model is, so `estimate` is an order of magnitude, not a number to budget against. A real tokenizer (Anthropic's `count_tokens` endpoint, or a local BPE) is still a follow-up; nothing here replaces the division. `JUDGE_OUTPUT_TOKENS` itself is no longer a guess: calibrated on 2026-09-16 to 174, the mean of `completion + completionDetails.reasoning` over the six `llm-rubric` components of the example run it was fit to (321 over the two of the report-fixture file), because a rejecting judge writes a long explanation and a passing one does not. The example has been re-run since, with two rejecting judges instead of three: the same six calls wrote 666 output tokens rather than 1042, so the committed report now shows the judge estimate 23.9% high. The error tracks how many rubric cases fail, which no constant can know in advance.
 - **The example's feature carries one `email` string where moonlighter wants three fields** — the shim's `parse_email` reconstructs `{from_, subject, body}` from that one string (fixed in 732c140, after the split-on-blank-line version dropped bodies), so it stays a parser written against the case shapes seen so far; giving the feature `from`, `subject` and `body` as three inputs would remove the guessing.
 
 ## Carried out of the whole-branch review of the run half (2026-09-15)
 
 Findings triaged as too small to fix in the review's own fix wave. Each is one line because each is one place to look.
 
-- The README's command block exports one `FORGE_MODEL` while the example's `describe` and `scenarios` ran on others; the table above it says so, the block does not.
-- `biome.json` negates one level deep only, so a nested ignore pattern would not apply.
-- `examples/moonlighter-classify-email/.forge/usage.jsonl` is gitignored on purpose (it carries per-call figures from the run machine); the example README now says so.
 - The `promptfoo-validate` CI job downloads 2 GB of promptfoo on every push and has not yet been observed passing on `ubuntu-latest`. Suggestion: `actions/cache` on `~/.bun/install/cache`.
